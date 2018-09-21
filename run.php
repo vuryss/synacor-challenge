@@ -114,12 +114,13 @@ while (true) {
     }
 
     if ($debug) {
-        if (!$debug2 && in_array('32775', $arguments)) {
+        if ($position == 5489 || $debug2) {
             $debug2 = true;
-        }
-
-        if ($debug2) {
-            //echo 'L' . $position . ' -> ' . $command . '(' . implode(', ', $arguments) . ')' . PHP_EOL;
+            print_r($registers);
+            print_r($stack);
+        ////    //exit;
+            echo 'L' . $position . ' -> ' . $command . '(' . implode(', ', $arguments) . ')' . PHP_EOL;
+            readline('Press [Enter] to continue...');
         }
     }
 
@@ -359,15 +360,16 @@ class OpCodes
         if (strpos($input, 'r' . "\n" . 'debug') === 0) {
             $input = 'r' . "\n";
             $debug = true;
+            //self::dumpInstructions();exit;
             global $registers;
-            $registers[7] = 0;
+            $registers[7] = 1;
         }
 
-        if ($debug) {
-            global $position;
+        //if ($debug) {
+        //    global $position;
             //echo '---------------------';
             //var_dump($position);
-        }
+        //}
 
         self::set($a, ord($char));
         return true;
@@ -378,5 +380,29 @@ class OpCodes
         echo 'Commands: ';
         print_r(readline_list_history());
         exit;
+    }
+
+    private static function dumpInstructions()
+    {
+        global $data, $codes;
+
+        for ($i = 0; $i < count($data); $i++) {
+            if (!isset($codes[$data[$i]])) {
+                continue;
+            }
+
+            $a = $codes[$data[$i]];
+
+            $arguments = [];
+
+            for ($j = 0; $j < $a[1]; $j++) {
+                $arguments[] = $data[$i + $j + 1];
+            }
+
+
+            echo 'L' . $i . ' -> ' . $a[0] . '(' . implode(', ', $arguments) . ')' . PHP_EOL;
+
+            $i += $a[1];
+        }
     }
 }
