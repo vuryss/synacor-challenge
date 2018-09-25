@@ -116,11 +116,12 @@ while (true) {
     if ($debug) {
         if ($position == 5489 || $debug2) {
             $debug2 = true;
-            print_r($registers);
-            print_r($stack);
+            //print_r($registers);
+            //print_r($stack);
         ////    //exit;
             echo 'L' . $position . ' -> ' . $command . '(' . implode(', ', $arguments) . ')' . PHP_EOL;
-            readline('Press [Enter] to continue...');
+            //readline('Press [Enter] to continue...');
+            echo 'MEMORY: ' . memory_get_usage() . PHP_EOL;
         }
     }
 
@@ -360,7 +361,7 @@ class OpCodes
         if (strpos($input, 'r' . "\n" . 'debug') === 0) {
             $input = 'r' . "\n";
             $debug = true;
-            //self::dumpInstructions();exit;
+            self::dumpInstructions();exit;
             global $registers;
             $registers[7] = 1;
         }
