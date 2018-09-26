@@ -95,14 +95,24 @@ $input = [
     'north',
     'take teleporter',
     'use teleporter',
-    'debug',
-    //'take strange book',
-    //'take business card',
+    'take strange book',
+    'take business card',
+    'fix teleporter',
+    'use teleporter',
+    'north',
+    'north',
+    'north',
+    'north',
+    'north',
+    'north',
+    'north',
+    'north',
+    'north',
+    'take orb',
 ];
 $input = implode("\n", $input) . "\n";
 
-$debug = false;
-$debug2 = false;
+$action = false;
 
 while (true) {
     $code = $codes[$data[$position]];
@@ -113,19 +123,24 @@ while (true) {
         $arguments[] = $data[$position + $i + 1];
     }
 
-    if ($debug) {
-        if ($position == 5489 || $debug2) {
-            $debug2 = true;
-            //print_r($registers);
-            //print_r($stack);
-        ////    //exit;
-            echo 'L' . $position . ' -> ' . $command . '(' . implode(', ', $arguments) . ')' . PHP_EOL;
-            //readline('Press [Enter] to continue...');
-            echo 'MEMORY: ' . memory_get_usage() . PHP_EOL;
-        }
+    if ($position == 5489 || $action == 'insert values') {
+        OpCodes::set('32768', '6'); // Register 0 to 6
+        $action = false;
     }
 
+    //if ($action == 'debug') {
+        //echo 'L' . $position . ' -> ' . $command . '(' . implode(', ', $arguments) . ')' . PHP_EOL;
+    //}
+
     $result = OpCodes::callCommand($command, $arguments);
+
+    if ($action == 'fix_teleporter') {
+        echo PHP_EOL . 'Fixing teleporter...' . PHP_EOL . PHP_EOL;
+        OpCodes::wmem('5489', 21); // Remove slow function call
+        OpCodes::wmem('5490', 21); // Remove slow function call
+        OpCodes::set('32775', '25734'); // Register 7 to 25734
+        $action = 'insert_values';
+    }
 
     if ($result) {
         $position += $code[1] + 1;
@@ -348,7 +363,7 @@ class OpCodes
 
     public static function in($a)
     {
-        global $input, $debug;
+        global $input, $action;
 
         if (empty($input)) {
             $input = readline() . "\n";
@@ -358,20 +373,12 @@ class OpCodes
         $char = $input[0];
         $input = substr($input, 1);
 
-        if (strpos($input, 'r' . "\n" . 'debug') === 0) {
-            $input = 'r' . "\n";
-            $debug = true;
-            self::dumpInstructions();exit;
-            global $registers;
-            $registers[7] = 1;
+        if (strpos($input, 'fix teleporter') === 0) {
+            $action = 'fix_teleporter';
+            $input = substr($input, 14);
         }
 
-        //if ($debug) {
-        //    global $position;
-            //echo '---------------------';
-            //var_dump($position);
-        //}
-
+        echo $char;
         self::set($a, ord($char));
         return true;
     }

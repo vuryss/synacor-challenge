@@ -42,17 +42,58 @@ $stack = [
 
 $r0 = 4;
 $r1 = 1;
-$r7 = 1;
+$r7 = 3;
+$memory = [];
 
-$time = microtime(true);
-echo 'Starting with ' . $r0 . ' ' . $r1 . ' ' . $r7 . PHP_EOL;
-$r0 = a5($r0, $r1, $r7);
-echo 'Completed in ' . (microtime(true) - $time) . ' seconds' . PHP_EOL;
-echo 'Register 0: ' . $r0 . PHP_EOL;
-echo 'Register 1: ' . ($r0 - 1) . PHP_EOL;
-echo 'Register 7: ' . $r7 . PHP_EOL;
+for ($i = 1; $i < 32768; $i++) {
+    $memory = [];
+    $register = a6($r0, $r1, $i);
+
+    echo 'Result from ' . $i . ': ' . $register . PHP_EOL;
+
+    if ($register == 6) {
+        echo 'FOUND! Register 7: ' . $i . PHP_EOL;
+        break;
+    }
+}
+
+//$time = microtime(true);
+//echo 'Starting with ' . $r0 . ' ' . $r1 . ' ' . $r7 . PHP_EOL;
+//$r0 = a6($r0, $r1, $r7);
+//echo 'Completed in ' . (microtime(true) - $time) . ' seconds' . PHP_EOL;
+//echo 'Register 0: ' . $r0 . PHP_EOL;
+//echo 'Register 1: ' . ($r0 - 1) . PHP_EOL;
+//echo 'Register 7: ' . $r7 . PHP_EOL;
 
 // L5489 -> call(6027)
+
+function a6($r0, $r1, $r7) {
+    global $memory;
+
+    $key = $r0 . '.' . $r1;
+
+    if (isset($memory[$key])) {
+        return $memory[$key];
+    }
+
+    if ($r0 == 0) {
+        $result = ($r1 + 1) % 32768;
+        $memory[$key] = $result;
+        return $memory[$key];
+    }
+
+    if ($r1 == 0) {
+        $result = a6($r0 - 1, $r7, $r7);
+        $memory[$key] = $result;
+        return $memory[$key];
+    }
+
+    $r1 = a6($r0, $r1 - 1, $r7);
+
+    $result = a6($r0 - 1, $r1, $r7);
+    $memory[$key] = $result;
+    return $memory[$key];
+}
 
 function a5($r0, $r1, $r7) {
     if ($r0 == 0) {
