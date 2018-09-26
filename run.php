@@ -109,6 +109,21 @@ $input = [
     'north',
     'north',
     'take orb',
+    // Instructions for the puzzle 'vault'
+    'north',
+    'east',
+    'east',
+    'north',
+    'west',
+    'south',
+    'east',
+    'east',
+    'west',
+    'north',
+    'north',
+    'east',
+    // END Instructions for the puzzle 'vault'
+    'vault',
 ];
 $input = implode("\n", $input) . "\n";
 

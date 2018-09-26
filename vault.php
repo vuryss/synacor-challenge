@@ -33,7 +33,7 @@ while (true) {
     $values = $ops;
     $values[] = $value;
 
-    echo 'Went ' . implode(' ', $directions) . ' and got result: ' . calc($values) . ' [' . implode(', ', $values) . ']' . PHP_EOL;
+    //echo 'Went ' . implode(' ', $directions) . ' and got result: ' . calc($values) . ' [' . implode(', ', $values) . ']' . PHP_EOL;
 
     if ($row == $tRow && $column == $tColumn) {
         if (calc($values) == $tResult) {
